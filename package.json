@@ -9,8 +9,10 @@
     "start": "parcel index.html"
   },
   "dependencies": {
+    "praise": "^1.0.2",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "react-praise": "^1.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

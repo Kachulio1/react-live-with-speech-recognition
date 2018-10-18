@@ -4620,6 +4620,11 @@ posthtml@^0.11.2, posthtml@^0.11.3:
     posthtml-parser "^0.3.3"
     posthtml-render "^1.1.0"
 
+praise@^1.0.1, praise@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/praise/-/praise-1.0.2.tgz#137f22e0e7d36a771cd1961f74169b96577b5537"
+  integrity sha512-PmhM3CthO5YsBYbcmiLELuQ9W4+kXiDwkShzQt9WRTfedEPEy575uJpKj00I+ixWFaFADs0GiQYB2V7OPh//QA==
+
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -4757,7 +4762,15 @@ react-dom@^16.5.2:
     prop-types "^15.6.2"
     schedule "^0.5.0"
 
-react@^16.5.2:
+react-praise@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/react-praise/-/react-praise-1.0.4.tgz#76824c3af9f6efce37104aa1a567fe5d03a99f12"
+  integrity sha512-x+/PDoeej/RNHx29H5Kc401C1tOatO8hC2pi4qCkguHW44Pz6Edsh0VVVwy7z2KIsbTVe8DZAvJy7AwVNORK1A==
+  dependencies:
+    praise "^1.0.1"
+    react "^16.4.0"
+
+react@^16.4.0, react@^16.5.2:
   version "16.5.2"
   resolved "https://registry.yarnpkg.com/react/-/react-16.5.2.tgz#19f6b444ed139baa45609eee6dc3d318b3895d42"
   integrity sha512-FDCSVd3DjVTmbEAjUNX6FgfAmQ+ypJfHUsqUJOYNCBUp1h8lqmtC+0mXJ+JjsWx4KAVTkk1vKd1hLQPvEviSuw==
