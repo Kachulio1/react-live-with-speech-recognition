@@ -22109,7 +22109,148 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"App.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"node_modules/react-dom/cjs/react-dom.development.js"}],"node_modules/praise/dist/praise.js":[function(require,module,exports) {
+var define;
+var global = arguments[3];
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (factory((global.praise = {})));
+}(this, (function (exports) { 'use strict';
+
+  // Interfaces
+  /**
+   * Creates a Praise when provided a dictionary of phrases
+   * and an optional configuration object.
+   *
+   * @returns Praise
+   * @param phrases An object whose keys are strings of phrases to respond to, the values of which are functions to execute upon recognizing the phrase.
+   * @param config An optional configuration object for Praise.
+   */
+  var createPraise = function (phrases, _a) {
+      var _b = _a === void 0 ? {} : _a, _c = _b.keepListening, keepListening = _c === void 0 ? true : _c, _d = _b.onlyWhenIStop, onlyWhenIStop = _d === void 0 ? false : _d, _e = _b.confidence, confidence = _e === void 0 ? 0.8 : _e, _f = _b.onSuccess // noop
+      , onSuccess = _f === void 0 ? function (outputFromPhrases) { return undefined; } : _f // noop
+      ;
+      var SpeechRecognition = 
+      // @ts-ignore
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+          throw Error("Praise cannot initialize in this environment because there is no Speech Recognition API available.\nPlease use a browser that supports it.\n\nMore info: https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition");
+      }
+      var Praise = Object.create(null);
+      Praise.start = function () { return recognition.start(); };
+      Praise.hear = function (input) {
+          var functionToCall = Object.keys(phrases).find(function (phrase) { return phrase === "*" || input.toLowerCase().includes(phrase); });
+          functionToCall && onSuccess(phrases[functionToCall](input));
+      };
+      Praise.stop = function () { return recognition.stop(); };
+      var recognition = new SpeechRecognition();
+      recognition.interimResults = !onlyWhenIStop;
+      recognition.addEventListener("result", function (_a) {
+          var results = _a.results;
+          var response = Object.values(results)
+              .map(function (result) { return result.item(0); })
+              .filter(function (result) {
+              return result.confidence >= confidence;
+          })[0];
+          return response === undefined || Praise.hear(response.transcript);
+      });
+      keepListening && recognition.addEventListener("end", recognition.start);
+      return Praise;
+  };
+
+  exports.createPraise = createPraise;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
+
+},{}],"node_modules/react-praise/dist/react-praise.js":[function(require,module,exports) {
+var define;
+var global = arguments[3];
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('react'), require('praise')) :
+    typeof define === 'function' && define.amd ? define(['react', 'praise'], factory) :
+    (global['praise-react'] = factory(global.React,global.praise));
+}(this, (function (React,praise) { 'use strict';
+
+    /*! *****************************************************************************
+    Copyright (c) Microsoft Corporation. All rights reserved.
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+    this file except in compliance with the License. You may obtain a copy of the
+    License at http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+    MERCHANTABLITY OR NON-INFRINGEMENT.
+
+    See the Apache Version 2.0 License for specific language governing permissions
+    and limitations under the License.
+    ***************************************************************************** */
+    /* global Reflect, Promise */
+
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+
+    function __extends(d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    }
+
+    function __rest(s, e) {
+        var t = {};
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+                t[p[i]] = s[p[i]];
+        return t;
+    }
+
+    /**
+     * A React wrapper for Praise that takes its
+     * Config as top-level props and passes the
+     * value returned from the callback response
+     * to a phrase into its children using the
+     * children as a function (or render props)
+     * pattern.
+     *
+     * @augments React.Component<PraiseProps, PraiseState>
+     */
+    var Praise = /** @class */ (function (_super) {
+        __extends(Praise, _super);
+        function Praise() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.state = {};
+            return _this;
+        }
+        Praise.prototype.componentDidMount = function () {
+            var _this = this;
+            var _a = this.props, phrases = _a.phrases, otherProps = __rest(_a, ["phrases"]);
+            var keepListening = otherProps.keepListening, onlyWhenIStop = otherProps.onlyWhenIStop, confidence = otherProps.confidence;
+            praise.createPraise(phrases, {
+                keepListening: keepListening,
+                onlyWhenIStop: onlyWhenIStop,
+                confidence: confidence,
+                onSuccess: function (output) { return _this.setState(function () { return ({ output: output }); }); }
+            }).start();
+        };
+        Praise.prototype.render = function () {
+            var children = this.props.children;
+            var output = this.state.output;
+            return children(output);
+        };
+        return Praise;
+    }(React.Component));
+
+    return Praise;
+
+})));
+
+},{"react":"node_modules/react/index.js","praise":"node_modules/praise/dist/praise.js"}],"src/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22118,6 +22259,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
+
+var _reactPraise = _interopRequireDefault(require("react-praise"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -22139,6 +22284,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+var myPhrases = {
+  'joseph': function joseph(phrase) {
+    return "HI " + phrase;
+  },
+  "*": function _(phrase) {
+    return "You said " + phrase;
+  }
+};
+
+var MyAppWithVoice = function MyAppWithVoice(props) {
+  return _react.default.createElement(_reactPraise.default, {
+    phrases: myPhrases
+  }, function (output) {
+    return _react.default.createElement("h2", null, output);
+  });
+};
+
 var _default =
 /*#__PURE__*/
 function (_Component) {
@@ -22153,7 +22315,7 @@ function (_Component) {
   _createClass(_default, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement("p", null, "Can't wait...");
+      return _react.default.createElement("div", null, _react.default.createElement(MyAppWithVoice, null));
     }
   }]);
 
@@ -22161,19 +22323,19 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = _default;
-},{"react":"node_modules/react/index.js"}],"index.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-praise":"node_modules/react-praise/dist/react-praise.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
 
 var _reactDom = require("react-dom");
 
-var _App = _interopRequireDefault(require("./App"));
+var _App = _interopRequireDefault(require("./src/App"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _reactDom.render)(_react.default.createElement(_App.default, null), document.querySelector('.root'));
-},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","./App":"App.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"react":"node_modules/react/index.js","react-dom":"node_modules/react-dom/index.js","./src/App":"src/App.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -22200,7 +22362,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55513" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59626" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
